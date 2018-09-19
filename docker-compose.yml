@@ -1,0 +1,8 @@
+version: "3"
+services:
+  AISreducer:
+    image: ymslanda.innovationgarage.tech:5000/portpollution_aisreduction:latest
+    environment:
+      DATA: /ymslanda/PortPollution/ais
+    volumes:
+      - /ymslanda:/ymslanda
