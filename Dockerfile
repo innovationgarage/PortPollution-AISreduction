@@ -13,6 +13,10 @@ RUN apt-get update \
     && apt-get clean
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+# ENV SPARK_MASTER spark://ymslanda.innovationgarage.tech:7077
+# ENV SPARK_DRIVER_HOST ymslanda.innovationgarage.tech
+
+# EXPOSE 5000-5010
 
 # Set the working directory to /AISroot
 WORKDIR /AISroot
@@ -20,7 +24,7 @@ WORKDIR /AISroot
 # Copy the current directory contents into the container at /AISroot
 ADD . /AISroot
 
-RUN pip install -r ./requirements.txt
+RUN pip3 install -r ./requirements.txt
 
 ADD reduceAIS.sh /reduceAIS.sh
 CMD ["/reduceAIS.sh"]

@@ -25,7 +25,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--aispath', type=str, default='aishub', help='Path to where AIS messages are stored (msgpack format required)')
     parser.add_argument('--draughtpath', type=str, default='draught', help='Path to where AIS messages with draught value are stored (in parquet format)')
-    parser.add_argument('--lastfilerec', type=str, default='lastfile.rec', help='Path to a file containing the name of the last processed file')
+    parser.add_argument('--lastfilerec', type=str, default='draught_lastfile.rec', help='Path to a file containing the name of the last processed file')
     
     parser.set_defaults()
     args = parser.parse_args()
@@ -34,8 +34,10 @@ if __name__ == "__main__":
         .builder\
         .appName("AIS2Draught")\
         .getOrCreate()
-    sc = spark.sparkContext
 
+    sc = spark.sparkContext
+    sc.setLogLevel('WARN')
+    
     inpath = args.aispath
     infilenames = os.listdir(inpath)
 
@@ -95,3 +97,5 @@ if __name__ == "__main__":
     
     # print(draught_df.groupBy('mmsi').agg(draught_df['mmsi'], func.min('draught'), func.max('draught')).show())
     # df = spark.read.load("draught/date=2018-08-27")
+
+    spark.stop()
