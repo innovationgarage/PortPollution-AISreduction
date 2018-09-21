@@ -6,3 +6,6 @@ services:
       DATA: /ymslanda/PortPollution/ais
     volumes:
       - /ymslanda:/ymslanda
+    ports:
+      - 5001:5001
+      - 5102:5102

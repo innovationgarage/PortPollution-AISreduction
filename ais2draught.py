@@ -44,7 +44,9 @@ if __name__ == "__main__":
     print('Processing AIS messages from {}'.format(args.aispath))
     
     infilepaths_rdd = sc.parallelize(infilenames).map(lambda x: (os.path.join(inpath, x), os.path.getmtime(os.path.join(inpath, x))))
-    infilepaths_rdd_sorted = infilepaths_rdd.sortBy(lambda x: x[1], ascending=False) 
+    infilepaths_rdd_sorted = infilepaths_rdd.sortBy(lambda x: x[1], ascending=False)
+#    infilepaths_rdd = sc.parallelize(infilenames).map(lambda x: (os.path.join(inpath, x)))    
+#    infilepaths_rdd_sorted = infilepaths_rdd
     last_modified_file = list(infilepaths_rdd_sorted.take(1)[0])
 
     if os.path.isfile(args.lastfilerec):
