@@ -36,8 +36,7 @@ if __name__ == "__main__":
     sc = spark.sparkContext
     sc.setLogLevel('WARN')
     
-#    partitions = int(sys.argv[1]) if len(sys.argv) > 1 else 2
-    partitions = 100
+    partitions = int(sys.argv[1]) if len(sys.argv) > 1 else 2
     n = 100000 * partitions
 
     def f(_):
@@ -47,8 +46,7 @@ if __name__ == "__main__":
 
     count = spark.sparkContext.parallelize(range(1, n + 1), partitions).map(f).reduce(add)
     print("Pi is roughly %f" % (4.0 * count / n))
-#    with open(sys.argv[2], 'w') as f:
-    with open('easypi.res', 'w') as f:        
+    with open(sys.argv[2], 'w') as f:
         f.write(str(datetime.now()))
         f.write(', ')
         f.write(str(4.0 * count / n))

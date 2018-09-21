@@ -7,10 +7,10 @@ while true; do
     
     # spark-submit --master spark://ymslanda.innovationgarage.tech:7077 pi.py --outpath $DATA/pi.res
     
-    spark-submit --master spark://ymslanda.innovationgarage.tech:7077 \
-		 easyPi.py 10 $DATA/pi.res
+    # spark-submit --master spark://ymslanda.innovationgarage.tech:7077 \
+    # 		 easyPi.py 10 $DATA/pi.res
 
-    # python -u easyPi.py 10 $DATA/pi.res
+    python -u easyPi.py 100 $DATA/pi.res
 
     # spark-submit --master spark://192.168.1.162:7077 pi.py 10
     
