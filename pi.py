@@ -36,7 +36,7 @@ import csv
 
 if __name__ == "__main__":
     """
-        Usage: pi [partitions]
+        Usage: python pi.py --partitions 100 --outpath pi.res
     """
     
     # , ('spark.executor.memory', '1g')
@@ -46,14 +46,25 @@ if __name__ == "__main__":
         ('spark.app.name', 'Pi'),
 #        ('spark.dynamicallocation.enabled', 'false'),
         ('spark.executor.cores', '3'),
-        ('spark.cores.max', '3')])    
+        ('spark.cores.max', '3')])
+
+       
     spark = SparkSession\
         .builder\
-        .config(conf=conf)\
+        .appName("PI")\
         .getOrCreate()
 
     sc = spark.sparkContext
     sc.setLogLevel('WARN')
+    sc.addPyFile("/AISroot/dependencies.zip")
+
+    # spark = SparkSession\
+    #     .builder\
+    #     .config(conf=conf)\
+    #     .getOrCreate()
+
+    # sc = spark.sparkContext
+    # sc.setLogLevel('WARN')
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--outpath', type=str, default='pi.res')
