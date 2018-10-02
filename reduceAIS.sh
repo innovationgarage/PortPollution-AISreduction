@@ -5,6 +5,16 @@ cd /AISroot
 while true; do
     DATE="$(date --iso-8601=seconds -u)"
     
+    # spark-submit \
+    # 	--conf spark.driver.bindAddress="0.0.0.0" \
+    # 	--conf spark.driver.host="ymslanda.innovationgarage.tech" \
+    # 	--conf spark.driver.port=5001 \
+    # 	--conf spark.driver.blockManager.port=5102 \
+    #     --conf spark.dynamicAllocation.enabled=false \
+    # 	--master spark://ymslanda.innovationgarage.tech:7077 \
+    # 	--py-files dependencies.zip \
+    # 	ais2draught.py --aispath $DATA/aishub/ --draughtpath $DATA/draught/ --lastfilerec $DATA/draught_lastfile.rec --tstrec $DATA/tst.rec
+
     spark-submit \
     	--conf spark.driver.bindAddress="0.0.0.0" \
     	--conf spark.driver.host="ymslanda.innovationgarage.tech" \
@@ -13,8 +23,13 @@ while true; do
 	--conf spark.dynamicAllocation.enabled=false \
     	--master spark://ymslanda.innovationgarage.tech:7077 \
     	--py-files dependencies.zip \
-    	ais2draught.py --aispath $DATA/aishub/ --draughtpath $DATA/draught/ --lastfilerec $DATA/draught_lastfile.rec --tstrec $DATA/tst.rec
+    	ais2draught.py \
+          --aispath "$DATA/aishub/aishub-2018-09-26T07:00:13+00:00-37.msgpack" \
+          --draughtpath $DATA/test/ \
+          --lastfilerec $DATA/test_lastfile.rec \
+          --tstrec $DATA/test_tst.rec
 
+    
     # pi.py --partitions 300 --outpath $DATA/pi.res
     # python ais2draught.py --aispath $DATA/aishub/ --draughtpath $DATA/draught/ --lastfilerec $DATA/draught_lastfile.rec 
 

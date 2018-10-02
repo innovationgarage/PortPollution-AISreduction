@@ -36,9 +36,9 @@ ADD . /AISroot
 
 RUN pip install -r requirements.txt
 
-# RUN pip install -t dependencies -r requirements.txt
-# WORKDIR dependencies
-# RUN zip -r ../dependencies.zip .
+RUN pip install -t dependencies -r requirements.txt
+WORKDIR dependencies
+RUN cd dependencies; zip -r ../dependencies.zip .
 
 # RUN pip3 install -r ./requirements.txt
 
