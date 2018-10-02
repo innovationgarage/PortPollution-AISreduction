@@ -132,7 +132,7 @@ if __name__ == "__main__":
 
     sc = spark.sparkContext
     sc.setLogLevel('WARN')
-    sc.addPyFile("./dependencies.zip")
+    sc.addPyFile(os.path.abspath("./dependencies.zip"))
 
     from datetime import datetime
     import argparse
