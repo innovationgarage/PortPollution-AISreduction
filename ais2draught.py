@@ -95,12 +95,12 @@ def infiles_to_draught(new_infiles_rdd, tstrec, last_modified_file, draughtpath)
     ais_w_draught = ais_w_mmsi.filter(lambda x: 'draught' in x.keys())
     ais_w_draught.persist()
 
-    draught_df = ais_w_draught_as_df(ais_w_draught)
+    #draught_df = ais_w_draught_as_df(ais_w_draught)
 
-    print('Writing AIS messages with draught measurements to {}'.format(os.path.join(draughtpath, str(datetime.now().date()))))
-    draught_df.write.format("parquet").mode('overwrite').option("header", "true").save(os.path.join(draughtpath, str(datetime.now().date())))
+    #print('Writing AIS messages with draught measurements to {}'.format(os.path.join(draughtpath, str(datetime.now().date()))))
+    #draught_df.write.format("parquet").mode('overwrite').option("header", "true").save(os.path.join(draughtpath, str(datetime.now().date())))
 
-    print(draught_df.show())
+    #print(draught_df.show())
 
     with open(tstrec, mode='w') as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -142,6 +142,7 @@ if __name__ == "__main__":
     import csv
 
     if os.path.isfile(args.aispath):
+        print("Single file")
         new_infiles_rdd = sc.parallelize([(args.aispath, os.path.getmtime(args.aispath))])
         infiles_to_draught(new_infiles_rdd, args.tstrec, args.aispath, args.draughtpath)
     else:
