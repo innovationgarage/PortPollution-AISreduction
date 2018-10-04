@@ -2,7 +2,6 @@ from pyspark import SparkContext, SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql import Row
 from pyspark.sql.types import *
-import pyspark.sql.functions as func
 from datetime import datetime
 import argparse
 import msgpack
@@ -12,6 +11,7 @@ import csv
 import contextlib
 
 def read_msgs(infilepath):
+    print "XXXXXXXXXXXXXXXX READING FILE", infilepath
     try:
         with open(infilepath, 'rb') as f:
             unpacker = msgpack.Unpacker(f, raw=False)
@@ -20,15 +20,23 @@ def read_msgs(infilepath):
     except Exception as e:
         print('Unable to read {}: {}'.format(infilepath, e))
 
-def timestamp2date(msg):
-    msg['date'] = msg['timestamp'].split('T')[0]
-    return msg
+def write_msgs(data, outdirpath):
+    data = data.glom().zipWithIndex()
+    @data.map
+    def write((lines, idx)):
+        filename = "%s/test-output-%s.msgpack" % (outdirpath, idx)
+        print "XXXXXXXXXXXXXXXX WRITING FILE", filename
+        with open(filename, 'wb') as f:
+            for msg in lines:
+                msgpack.dump(msg, f)
+        return filename
+    return write
 
 if __name__ == "__main__":
 
     '''
     Usage: 
-        python ais2draught.py --aispath aishub/ --draughtpath draught/ --rddpath draught_rdd/ --lastfilerec lastfile.rec
+        python test.py outdir file1.msgpack ... fileN.msgpack
 
     '''
     spark = SparkSession\
@@ -47,23 +55,19 @@ if __name__ == "__main__":
     import sys
     import csv
 
-    new_infiles_rdd = sc.parallelize([(sys.argv[1], os.path.getmtime(sys.argv[1]))])
-    ais_unpacked_rdd = new_infiles_rdd.flatMap(lambda x: read_msgs(x[0]))
-    ais_unpacked_rdd = ais_unpacked_rdd.coalesce(20)
-    ais_w_mmsi = ais_unpacked_rdd.filter(lambda x: 'mmsi' in x.keys()).map(timestamp2date)
-    ais_w_draught = ais_w_mmsi.filter(lambda x: 'draught' in x.keys())
-    ais_w_draught.persist()
+    filenames = sc.parallelize([(name, os.path.getmtime(name)) for name in sys.argv[2:]], len(sys.argv[2:]))
 
-    filedata = ais_w_draught.glom().zipWithIndex()
-    
-    @filedata.map
-    def write((lines, idx)):
-        filename = "/tmp/output-%s.msgpack" % idx
-        with open(filename, 'wb') as f:
-            for msg in lines:
-                msgpack.dump(msg, f)
-        return filename
+    print "XXXX Number of files: %s" % len(sys.argv[1:])
+    print "XXXX Number of partitions before reading files: %s" % filenames.getNumPartitions()
 
-    print "Wrote", write.collect()
+    data = filenames.flatMap(lambda x: read_msgs(x[0]))
+
+    print "XXXX Number of partitions after reading files: %s" % data.getNumPartitions()
+
+    data = data.filter(lambda x: 'draught' in x.keys())
+
+    print "XXXX Number of partitions after filtering: %s" % data.getNumPartitions()
+
+    print "Wrote", write_msgs(data, sys.argv[1]).collect()
 
     spark.stop()
